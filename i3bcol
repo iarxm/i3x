@@ -1,0 +1,112 @@
+#!/bin/env python
+from threading import Thread
+import tkinter as tk
+import i3ipc
+import prctl
+
+prctl.set_name("i3bcol")
+
+def sbar_color(color):
+    status_bar.config(bg=color)
+    status_bar.update_idletasks()
+
+def run_i3ipc():
+    i3.main()
+
+def on_output_change(i3, e): # update on mon change
+    update_geometry
+
+def update_geometry(): # set geo
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    # Calculate dimensions as a percentage of screen dimensions
+    width = int(screen_width * 1.00)  # screen width
+    height = int(screen_height * 0.001)  # screen height
+    
+    # You can also set the x and y offsets the same way
+    x_offset = int(screen_width * 0)  # from the left
+    y_offset = int(screen_height * 0.999)  # from the top
+    
+    root.geometry(f"{width}x{height}+{x_offset}+{y_offset}")
+    #geometry_string = f"{width}x{height}+{x}+{y}"
+    #root.geometry(geometry_string)
+    #root.geometry('1920x2+1+1078')  # adjust the dimensions
+
+root = tk.Tk()
+root.overrideredirect(1)
+
+status_bar = tk.Label(root, bg="#efef8f")
+status_bar.pack(fill=tk.X)
+
+update_geometry()
+
+def is_descendant_of_marked_parent(window, mark, workspace):
+    tree = i3.get_tree()
+    parent_container = next(filter(lambda c: mark in c.marks, tree), None)
+    
+    # Check if the window is a descendant of a marked parent
+    is_descendant = False
+    if parent_container:
+        temp_window = window
+        while temp_window.parent:
+            if temp_window.parent.id == parent_container.id:
+                is_descendant = True
+                break
+            temp_window = temp_window.parent
+    
+    # Check if the window is on the specified workspace
+    is_on_workspace = window.workspace().name == workspace
+
+    return is_descendant or is_on_workspace
+    
+def window_has_class_name(window, class_name):
+    return window.window_class == class_name
+
+def on_window_focus(i3, e):
+    window = i3.get_tree().find_by_id(e.container.id)
+
+    if is_descendant_of_marked_parent(window, "floo", "xoo"):
+        sbar_color(rd)
+    elif is_descendant_of_marked_parent(window, "flsx",  "xsy"):
+        sbar_color(gn)
+    elif is_descendant_of_marked_parent(window, "flai",  "xai"):
+        sbar_color(hi)
+    elif is_descendant_of_marked_parent(window, "flml",  "xml"):
+        sbar_color(bl)
+    elif is_descendant_of_marked_parent(window, "flmj",  "xmj"):
+        sbar_color(gy)
+    elif is_descendant_of_marked_parent(window, "flrd",  "xrd"):
+        sbar_color(gy)
+    elif window_has_class_name(window, "tabbed"):
+        sbar_color(gy)
+    else:
+        sbar_color(bk)
+
+# init
+gy = "#808080"
+bk = "#000000"
+yw = "#FFFF00"
+gn = "#00FF00"
+rd = "#FF0000"
+bl = "#0099FF"
+
+hi = "#efef8f"
+xx = "#ccdc90"
+
+# Create an i3ipc connection
+i3 = i3ipc.Connection()
+
+# Subscribe to window focus changes
+i3.on('window::focus', on_window_focus)
+i3.on('output', on_output_change)  # Subscribe to output change events
+
+# Threading for i3ipc
+i3ipc_thread = Thread(target=run_i3ipc)
+i3ipc_thread.start()
+
+# Keep Tkinter mainloop in the main thread
+root.mainloop()
+
+# Wait for i3ipc thread to finish (though this may never happen if you don't exit i3)
+i3ipc_thread.join()

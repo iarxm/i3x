@@ -1,0 +1,41 @@
+#!/bin/bash
+
+_launch() {
+  # Terminate already running bar instances
+  killall -q polybar
+  # If all your bars have ipc enabled, you can also use
+  # polybar-msg cmd quit
+  
+  # Launch Polybar, using default config location ~/.config/polybar/config.ini
+  polybar x 2>&1 | tee -a /tmp/polybar.log & disown
+  
+  echo "Polybar launched..." ;}
+
+BAR_NAME="x"
+
+toggle_polybar() {
+    if pgrep -x polybar >/dev/null; then
+        polybar-msg cmd hide
+    else
+        polybar-msg cmd show
+    fi
+}
+
+show_polybarx() {
+  # Main loop
+  while : ; do
+      if xdotool keydown --delay 1000 "Super+Alt"; then
+          toggle_polybar
+          while xdotool key F1; do
+              sleep 0.1
+          done
+          toggle_polybar
+      fi
+      sleep 0.1
+  done }
+
+
+case $cmd
+  launch)    _launch ;;
+  hide)      _show_polybarx ;;
+esac
