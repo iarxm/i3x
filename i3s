@@ -4,8 +4,8 @@
 
 # defs ######################################################
 
-_init() {
-  ws_n=""
+_ini() {
+  declare -i ws_n
   i3win_configs="$HOME/.config/i3/xwin.config"
   ws_n_cache="$HOME/.cache/i3n"
   focus_parent="Shift+Ctrl+K"
@@ -14,9 +14,9 @@ _init() {
 _prn() { printf "%s \n" $1 ; }
 
 _print_ws_n() { 
-	i3-msg -t get_workspaces \
-		| jq '.[] | select(.focused==true).name' \
-		| cut -d"\"" -f2 ;}
+    i3-msg -t get_workspaces \
+        | jq '.[] | select(.focused==true).name' \
+        | cut -d"\"" -f2 ;}
 
 _set_ws_n() { ws_n="$(_print_ws_n)"; }
 
@@ -60,14 +60,14 @@ _eq_set_id_iterate() {
 _eq_x() { [ -n "$WID" ] && { i3-msg -q "[id=$WID] focus"; sleep 0.25; xdotool key "semicolon+e"; unset WID; }; }
 
 _eq_all_nvim() { # get pid of all nvim instances
-  _set_wid_c
-  _scratch
-  for PID in $(_eq_pids_nvim); do # iterate over each pid
- 	  _eq_set_id_iterate
-    _eq_x
-	done
-  _scratch
-  _foc_wid_c;}
+    _set_wid_c
+    _scratch
+    for PID in $(_eq_pids_nvim); do # iterate over each pid
+        _eq_set_id_iterate
+        _eq_x
+    done
+    _scratch
+    _foc_wid_c;}
 
 
 # equalise all ###############################################
@@ -78,362 +78,216 @@ _prnt_wincmds() { grep -Ev '^\s*#|^$' "$1" | sed -r 's/^for_window //'; }
 
 _win_cmds()     { _prnt_wincmds "$i3win_configs"; }
 
-_resize_winls() { # send i3 cmd lists from file to i3-msg
-	IFS=$'\n' # comments & for_window rm'd; regex  '^\s*#|^$' todo
-	for i in $(_win_cmds); do
-		i3-msg -q "$i" & #echo "$i"
-	done ;}
-
 _cbar_reload() { pkill i3bcol; i3bcol & }
 
+
+_resize_winls() { # send i3 cmd lists from file to i3-msg
+    
+    IFS=$'\n' # comments & for_window rm'd; regex  '^\s*#|^$' todo
+    for i in $(_win_cmds); do
+        i3-msg -q "$i" & #echo "$i"
+    done ;}
+
+
 _normalise() { # on monitor resolution change
-  _cbar_reload
-	_resize_winls 
-	_eq_all_nvim ;}
+    _cbar_reload
+    _resize_winls 
+    _eq_all_nvim ;}
 
 
 # floating win binds ######################################
 
-_initx() { sleepx="$1"; class="$2"; shift 2; _exc="$@"; }
+_stf()  {
 
-_stx()  { st -c "$class" zsh -i -c "$_exc" & }
+    class="$1"; shift 1; exc="$@"
 
-_float() {
-  sleep "${sleepx}" #echo "${_sleep}"
-	i3-msg '[class="'"$class"'"] move scratchpad'
-	i3-msg '[class="'"$class"'"] scratchpad show' ;}
+    [ -n "$exc" ] && {
+        st -c "$class" zsh -i -c "$exc" & } || {
+        st -c "$class" & }
 
-_stfl() {
-  _initx $@
-  [ -n "$_exc" ] && _stx || _st
-  _float; }
-
-_qb_zarc() { # still needed?
-	_mark="$1"
-	_exc=$@
-	_class="qutebrowser"
-	$_exc &
-	sleep "${sleepx}"
-	i3-msg "mark $mark"
-	i3-msg '[class="'"$class"'" con_mark="'"$mark"'"] move scratchpad'
-	i3-msg '[class="'"$class"'" con_mark="'"$mark"'"] scratchpad show' ; }
+    sleep 0.3
+    i3-msg '[class="'"$class"'"] move scratchpad'
+    i3-msg '[class="'"$class"'"] scratchpad show'; }
 
 
-# ARX #############################################
-#st -c "$_class" zsh -c "source $PROFILE_I; $_cmd" &
+_xxf()  {
 
-# FLOATING WORKSPACES ###################################
+    class="$1"; shift 1; exc="$@"
+
+    #echo $exc
+    eval $exc &
+
+    sleep 0.4
+    i3-msg '[class="'"$class"'"] move scratchpad'
+    i3-msg '[class="'"$class"'"] scratchpad show';}
+
+
+# floating workspaces ###################################
+
 _l_tabd() { i3-msg "layout tabbed";}
+
+
 _set_hsplit_x() {
-	i3-msg "focus parent"
-	i3-msg "split h"
-	$1 ;}
+
+    i3-msg "focus parent"
+    i3-msg "split h"
+    $1 ;}
+
 
 _set_hsplit() {
-  _l_tabd
-	st -c hsplitx $cmda & sleep 0.5s
-  _set_hsplit_x $1 ;}
+
+    _l_tabd
+    st -c hsplitx $cmda & sleep 0.5s
+    _set_hsplit_x $1 ;}
+
 
 _wcontainer() {
-  i3-msg "focus parent"
-	i3-msg "focus parent"
-	i3-msg "move container to workspace number $ws_n"
-  _foc_ws_n
-	#kill $(wmctrl -lpx | awk '/tabbedx/ {print $3}')
-	#- no need, handy to have the window there
-}
+    i3-msg "focus parent"
+    i3-msg "focus parent"
+    i3-msg "move container to workspace number $ws_n"
+    _foc_ws_n ;}
+    #kill $(wmctrl -lpx | awk '/tabbedx/ {print $3}')
+    #- no need, handy to have the window there
 
-_init_float() {
-  mark="$1"
-  class="$mark"
-  _set_ws_n
-	i3-msg "workspace 7"
-	_l_tabd 
-  st -c fl_tmp & sleep 0.4; }
+
+_ini_float() {
+  
+    mark="$1"
+    class="$mark"
+    _set_ws_n
+    i3-msg "workspace 7"
+    _l_tabd 
+    st -c fl_tmp & sleep 0.4; }
 
 
 _set_float() {
-  sleep "$1"
-  #i3-msg "layout tabbed"
-	i3-msg "focus parent"
-	i3-msg "mark $mark"
-	i3-msg "move scratchpad"
-	i3-msg "workspace $ws_n"
-	i3-msg "[con_mark=$mark] scratchpad show"
-	i3-msg "[con_mark=$mark] move position 0ppt 0ppt"
-	i3-msg "[con_mark=$mark] resize set 100ppt 100ppt"
-	i3-msg '[class="'"${class}"'"] move scratchpad'
-	#xdotool key "semicolon+e"
-	i3-msg "[con_mark=$mark] scratchpad show"
-  kill $(pgrep -f "st -c fl_tmp")
-}
+    
+    sleep "$1"
+    #i3-msg "layout tabbed"
+    i3-msg "focus parent"
+    i3-msg "mark $mark"
+    i3-msg "move scratchpad"
+    i3-msg "workspace $ws_n"
+    i3-msg "[con_mark=$mark] scratchpad show"
+    i3-msg "[con_mark=$mark] move position 0ppt 0ppt"
+    i3-msg "[con_mark=$mark] resize set 100ppt 100ppt"
+    i3-msg '[class="'"${class}"'"] move scratchpad'
+    #xdotool key "semicolon+e"
+    i3-msg "[con_mark=$mark] scratchpad show"
+    kill $(pgrep -f "st -c fl_tmp");}
+
 
 _eloop() { for i in $@; do $i; done }
 
+
 _ws_x() { 
   mark=$1; sleepx=$2; shift 2; 
-  _init_float "$mark"
+  _ini_float "$mark"
   _eloop $@
   _set_float $sleepx; }
 
+
+# workspaces : nav + custom names #########################
+
 _ws_go() { i3-msg "workspace $1" ;}
 
+
 _ws_go_abc() {
-  ws_x="$1"
-  _set_ws_n
-  _ret_ws_n
-
-  abc="$(echo $ws_n | grep "[aA-zZ"])"
-
-  [ -n "$abc" ] || _sav_ws_n
   
-  [ -n "$abc" ] && [ $ws_n == $ws_x ] && [ -n "$(cat ${ws_n_cache})" ] \
+    ws_x="$1"
+    _set_ws_n
+    _ret_ws_n
+
+    abc="$(echo $ws_n | grep "[aA-zZ"])"
+
+    [ -n "$abc" ] || _sav_ws_n
+  
+    [ -n "$abc" ] && [ $ws_n == $ws_x ] && [ -n "$(cat ${ws_n_cache})" ] \
     && { _ws_go $ws_p; _cl_cache; return; }
    
-  [ -n "$abc" ] && { _ws_go $ws_x; return; }
+    [ -n "$abc" ] && { _ws_go $ws_x; return; }
 
-  _ws_go $ws_x ;}
+    _ws_go $ws_x ;}
+
 
 _ws_y() {
-  ws_x=$1; shift 1
-  _ws_go_abc "$ws_x"
-  
-  sleep 0.5
-  _set_ws_n
-  [ $ws_n == $ws_x ] || return
 
-  _eloop $@ ; }
+    ws_x=$1; shift 1
+    _ws_go_abc "$ws_x"
+    #sleep 0.5
+    _set_ws_n
+    [ $ws_n == $ws_x ] || return
 
-
-# prgs ################################################
-#alias _nv="nvim -c lua require'auto.odo'.$1()"
-#_nv()      { nvim -c "edit a"; }
-_st()      { st -c "$class" $@ & sleep 0.4; }
-_nnn()     { st -c nn     -e nnn & }
-_nv()      { st -c "${1}" -e nvim -c "lua require'auto.odo'.${2}()"; }
-_voa()     { _nv voa oa & }
-_vma()     { _nv vma ma & }
-_vmj()     { _nv vmj mj & }
-_vml()     { _nv vml ml & }
-_vds_ev()  { st -c ds   -e nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev" ; }
-_mutt_ix() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter>'" & }
-_mutt_iy() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter><sidebar-toggle-visible><enter>'" & }
-_mutt_ii() { _mutt_ix; }
-_qb_o365() { qb win "https://outlook.office365.com/mail/" & }
-_qb_gpt()  { qb win "https://chat.openai.com" & }
-_qb_mlcx() { qb win "contacts.google.com" & }
-_qb_mlcy() { qb tab "https://outlook.office365.com/people/" & }
-_qb_cal()  { qb win "https://calendar.notion.so/" & }
-_qb_noti() { qb win "https://notion.so/" & }
-_qb_ml()   { _qb_gpt; }
-_qb_mlpv() { qb m; }
-_au()      { st -c "musicf" -e vimpc & }
-_ml_split() {
-  _mutt_ii
-  sleep 3
-  i3-msg '[class="mlx"] focus'
-  i3-msg "split h"
-  _qb_mlpv
-  sleep 3; i3-msg "focus right" ;}
-
-#firefox --new-window betterhelp.com &
-#qb win betterhelp.com & sleep 4s
-#qb w.oo & morgen &
-# todo: read only nmutt? #st -c tabbedx neomutt -e "push '<change-folder>=ii<enter>'" &
-
-# spaces ##################################################
-# TODO: vary sleep based on qb status (initiated or not)
-
-
-_ws_oo() {
-  _l_tabd
-  _qb_cal
-  _qb_noti
-  _voa ;}
-
-_ws_ml() {
-  _l_tabd
-  _qb_ml
-  _mutt_ii
-  _vml ;}
-
-_ws_ai()     { _qb_gpt; }
-_ws_mj()     { _vma; }
-_ws_au()     { _st; _au; }
-_ws_sx()     { _st; }
-_ws_sy()     { _st; }
-_ws_rd()     { _nnn; } #todo: create custom workspace for academic reading (focused)
-_ws_ds()     { _st "nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev""; }
-_ws_fl_ai()  { _ws_x "flai" "3" "_ws_ai"; }
-_ws_fl_oo()  { _ws_x "floo" "4" "_ws_oo" ;}
-_ws_fl_ml()  { _ws_x "flml" "3" "_ws_ml" ;}
-_ws_fl_mj()  { _ws_x "flmj" "3" "_ws_mj" ;}
-_ws_fl_au()  { _ws_x "flau" "2" "_ws_au" ;}
-_ws_fl_sx()  { _ws_x "flsx" "2" "_ws_sx" ;}
-_ws_fl_sy()  { _ws_x "flsy" "2" "_ws_sy" ;}
-_ws_fl_ds()  { _ws_x "flds" "2" "_ws_ds" ;}
-_ws_ab_rd()  { _ws_y "xrd" "_ws_rd";}
-_ws_ab_au()  { _ws_y "xau" "_ws_au";}
-_ws_ab_ai()  { _ws_y "xai" "_ws_ai";}
-_ws_ab_sx()  { _ws_y "xsx" "_ws_sx";}
-_ws_ab_sy()  { _ws_y "xsy" "_ws_sy";}
-_ws_ab_sy()  { _ws_y "xds" "_ws_ds";}
-_ws_ab_oo()  { _ws_y "xoo" "_ws_oo";}
-_ws_ab_ml()  { _ws_y "xml" "_ws_ml";}
-_ws_ab_mj()  { _ws_y "xmj" "_ws_mj";}
-
-_ws_ml_contain() { # TODO: container & non-floating, within any workspace 'x'
-  _wcont_init
-  _ws_ml
-  _wcont ;}
-
-# URLS #######################################
-# TODO: separate personal program configs into separate file
-
-urls=()
-url_soc_a() {
-	urls+=("https://www.facebook.com/iarom.ma")
-	urls+=("https://www.instagram.com/iarom.madden/")
-}
-url_soc_b() {
-	url_soc_a
-	urls+=("https://twitter.com/imaddsy")
-	urls+=("https://publish.socialchamp.io/app/v2/engage/inbox?itemType=all&itemStatus=unread")
-}
-url_oo() {
-	urls+=("notion.so")
-	urls+=("https://chat.openai.com/chat")
-}
-url_oox() {
-	# calendar.google.com opened with norestore func
-	urls+=("contacts.google.com")
-	urls+=("calendar.google.com")
-	urls+=("https://habitica.com/")
-}
-url_cm_a() {
-	urls+=("web.whatsapp.com")
-	urls+=("https://business.facebook.com/latest/inbox/")
-}
-
-
-# SPECIFIC SPACES ###############################
-
-q_wa() { qb xwin web.whatsapp.com ;}
-w_xx() { qb win chat.openai.com; }
-w_xy() {
-	qb win notion.so
-	#qb x win calendar.google.com & sleep 2s
-	#qb w.oo.wins & sleep 3s
-	#qb win notion.so & sleep 2s
-	#qb tab notion.so
-	#firefox calendar.google.com & # firefox to avoid qtwebengine issues with these sites
-		# just use morgen for the mo
-	#qb tab chat.openai.com
-}
-
-
-# POMODORO ###########################################
-
-_pomx() {
-		for R in $(printf "%s\n" "$poms" | grep R -o); do
-		  read -r line
-		  echo "$(pomo status)" || exit 1
-		done ;}
-_pomf1() { poms=$(pomodoro status --format "%R ⏱ %c/%g 🍅\n%d"); }
-_pomf2() { poms=$(pomo status); }
-_pom1()  { _pomf1; _pomx;}
-_pom2()  { _pomf2; _pomx;}
+    _eloop $@ ; }
 
 
 # monitors ###############################################
 
 _mon_x() { i3-msg "workspace $1"; i3-msg "move workspace to output $2"; }
 
+
 _mons() {
-  mon_a="$1"; mon_b="$2"; sleep 0.5s
-  # mon_a
-  # TODO: make into 2 oneline loops
-  _set_ws_n
-  _mon_x 1 $mon_a
-  _mon_x 2 $mon_a
-  _mon_x 3 $mon_a
-  _mon_x 4 $mon_a
-  _mon_x 5 $mon_a
-  _mon_x 6 $mon_a
-  _mon_x 7 $mon_a
-  _mon_x 8 $mon_b
-  _mon_x 9 $mon_b
-  _mon_x 10 $mon_b
-  _foc_ws_n
-}
+
+    mon_a="$1"; mon_b="$2"; sleep 0.5s # mon_a
+    # TODO: make into 2 oneline loops
+    _set_ws_n
+    _mon_x 1 $mon_a
+    _mon_x 2 $mon_a
+    _mon_x 3 $mon_a
+    _mon_x 4 $mon_a
+    _mon_x 5 $mon_a
+    _mon_x 6 $mon_a
+    _mon_x 7 $mon_a
+    _mon_x 8 $mon_b
+    _mon_x 9 $mon_b
+    _mon_x 10 $mon_b
+    _foc_ws_n ;}
 
 
 # focus ##################################################
 
-_focus_fixer() {
-  # fix focus stealing windows in i3 - tabbed preview activity.
-  # todo: remove i3scratch dependencies # make a python script
-	class="$1"
-	wid_x=$(xdotool search --class "$class")
-	echo "$wid_x"
-	[ ! -n "$wid_x" ] && exit
-	testx=$(i3scratch | grep "$class")
-	[ -n "$testx" ] \
-		&& xdotool windowactivate --sync "${wid_x}" \
-		|| i3-msg '[class="^'"$class"'$"] scratchpad show'
+_foc_fix() {
+    # fix focus stealing windows in i3 - tabbed preview activity.
+    # todo: remove i3scratch dependencies # make a python script
+    class="$1"
+    wid_x=$(xdotool search --class "$class")
+    echo "$wid_x"
+    [ ! -n "$wid_x" ] && exit
+    testx=$(i3scratch | grep "$class")
+    [ -n "$testx" ] \
+        && xdotool windowactivate --sync "${wid_x}" \
+        || i3-msg '[class="^'"$class"'$"] scratchpad show'
 }
 
 #_focus_scratch_cons() { i3-msg '[con_mark="^'"$1"'$"] scratchpad show'; } #overkill factoring
 
 
-# exec ################################################3
-
-_index() {
-  case $cmd in
-  # functions ####################
-	r|n|win.resize.all) _normalise ;;
-  eq)               _equalise_all_nvim ;;
-  wr|right)         _ws_nav_r ;;
-  wl|left)          _ws_nav_l ;;
-  wx)               _ws_go_abc "$1" ;;
-  mon)              _mons $@ ;;
-  ffxr)             _focus_fixer "$@" ;;
-  # float #######################
-  pom) 							_pomx ;;
-	pomo) 						_pomy ;;
-	stfl|bind.st)     _stfl $@ ;;
-	mrfl|bind.mark)   _wmark $@ ;; #TODO
-  # workspaces ####################
-	flai|ws.flai) 		_ws_fl_ai ;;
-	floo|ws.floo) 		_ws_fl_oo ;;
-  flds|ws.flds) 		_ws_fl_ds ;;
-  flmj|ws.flmj)     _ws_fl_mj ;;
-	flml|ws.flml) 	  _ws_fl_ml ;;
-	flau|ws.flau) 	  _ws_fl_au ;;
-	flrd|ws.flrd) 	  _ws_fl_rd ;;
-	flsx|ws.flsx)     _ws_fl_sx ;;
-	flsy|ws.flsy)   	_ws_fl_sy ;;
-  wxai)             _ws_ab_ai ;;
-  wxoo)             _ws_ab_oo ;;
-  wxml)             _ws_ab_ml ;;
-  wxmj)             _ws_ab_mj ;;
-  wxau)             _ws_ab_au ;;
-  wxrd)             _ws_ab_rd ;;
-  wxsx)             _ws_ab_sx ;;
-  wxsy)             _ws_ab_sy ;;
-  # windows ######################
-  w.ml)             _mutt_ii ;;
-  custom)           $@ ;;
-  esac 
-}
+# main ################################################3
 
 _main() {
-  cmd="$1" && [ -n "$1" ] && shift 1
-  _init
-  _index $@ ;}
 
-####################################################
+    cmd="$1" && [ -n "$1" ] && shift 1
+    
+    _ini
+
+    case $cmd in
+        # functions
+        r|w.resize.all)   _normalise ;;
+        eq)               _equalise_all_nvim ;;
+        mon)              _mons $@ ;;
+        # nav
+        ff|ffxr)          _foc_fix "$@" ;;
+        wr|right)         _ws_nav_r ;;
+        wl|left)          _ws_nav_l ;;
+        wx|numb)          _ws_go_abc "$1" ;;
+        # float
+        fl.mk|bind.mark)  _wmark $@ ;; #TODO
+        fl.st|bind.st)    _stf $@ ;;
+        xxf)              _xxf $@ ;;
+        *|custom)         $@ ;;
+    esac 
+}
+  
 
 _main $@
-
 
