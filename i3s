@@ -78,7 +78,7 @@ _prnt_wincmds() { grep -Ev '^\s*#|^$' "$1" | sed -r 's/^for_window //'; }
 
 _win_cmds()     { _prnt_wincmds "$i3win_configs"; }
 
-_cbar_reload() { pkill i3bcol; i3bcol & }
+_cbar_reload() { pkill i3cbar; i3cbar & }
 
 
 _resize_winls() { # send i3 cmd lists from file to i3-msg
