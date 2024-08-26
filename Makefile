@@ -8,5 +8,6 @@ all:
 
 install:
 	mkdir -p ${DSTDIR}${PREFIX}
-	install -m 755 i3s i3scratch i3spy i3ws i3cbar ixx ${DSTDIR}${PREFIX}/bin
+	install -m 755 i3s i3scratch ixx ${DSTDIR}${PREFIX}/bin
+	install -m 755 i3sbar-x i3sbar-ws i3sbar-c ${DSTDIR}${PREFIX}/bin
 
