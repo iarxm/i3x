@@ -32,9 +32,9 @@ _ret_ws_n() { ws_p="$(cat ${ws_n_cache})"; }
 #_ws_notif() { notify-send -u low "$ws_n";}
 #_ws_show() { i3-msg "bar mode toggle"; sleep 1; i3-msg "bar mode toggle"; }
 
-_ws_nav_l() { _set_ws_n; i3-msg workspace $((ws_n - 1)); _ws_show; }
+_ws_nav_l() { _set_ws_n; i3-msg workspace $((ws_n - 1)); } #_ws_show; }
 
-_ws_nav_r() { _set_ws_n; i3-msg workspace $((ws_n + 1)); _ws_show; }
+_ws_nav_r() { _set_ws_n; i3-msg workspace $((ws_n + 1)); } #_ws_show; }
 
 _foc_ws_n() { i3-msg "workspace $ws_n"; }
 
@@ -78,7 +78,7 @@ _prnt_wincmds() { grep -Ev '^\s*#|^$' "$1" | sed -r 's/^for_window //'; }
 
 _win_cmds()     { _prnt_wincmds "$i3win_configs"; }
 
-_cbar_reload() { pkill i3cbar; i3cbar & }
+_cbar_reload() { pkill i3sbar-c; i3sbar-c & }
 
 
 _resize_winls() { # send i3 cmd lists from file to i3-msg
