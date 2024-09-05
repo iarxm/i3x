@@ -41,10 +41,13 @@ if __name__ == '__main__':
 
         j = json.loads(line)
         non_x_ws = get_non_x_workspaces(i3)
-        j.insert(0, {'full_text': '----', 'name': 'workspace_info'})
+        #j.insert(0, {'full_text': '      ', 'name': 'workspace_info'})
 
         for ws in non_x_ws:
             j.insert(0, {'full_text': '%s' % ws.name, 'name': 'workspace_info'})
+
+        j.insert(0, {'full_text': '|', 'name': 'workspace_info'})
         print_line(prefix+json.dumps(j))
+
 
 
