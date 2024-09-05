@@ -33,14 +33,6 @@ def update_geometry(): # set geo
     #root.geometry(geometry_string)
     #root.geometry('1920x2+1+1078')  # adjust the dimensions
 
-root = tk.Tk()
-root.overrideredirect(1)
-
-status_bar = tk.Label(root, bg="#efef8f")
-status_bar.pack(fill=tk.X)
-
-update_geometry()
-
 def is_descendant_of_marked_parent(window, mark, workspace):
     tree = i3.get_tree()
     parent_container = next(filter(lambda c: mark in c.marks, tree), None)
@@ -64,7 +56,22 @@ def window_has_class_name(window, class_name):
     return window.window_class == class_name
 
 def on_window_focus(i3, e):
-    window = i3.get_tree().find_by_id(e.container.id)
+   
+    if hasattr(e, 'current') and e.current:
+        ws_name = e.current.name
+
+        if ws_name[0].isdigit():
+            sbar_color(bk)
+            return
+
+        return
+
+    if hasattr(e, 'container') and e.container:
+        window = i3.get_tree().find_by_id(e.container.id)
+        if not window:
+            sbar_color(bk)
+            return
+
 
     if is_descendant_of_marked_parent(window, "floo", "xoo"):
         sbar_color(rd)
@@ -75,6 +82,8 @@ def on_window_focus(i3, e):
     elif is_descendant_of_marked_parent(window, "flml",  "xml"):
         sbar_color(bl)
     elif is_descendant_of_marked_parent(window, "flmj",  "xmj"):
+        sbar_color(gy)
+    elif is_descendant_of_marked_parent(window, "flau",  "xau"):
         sbar_color(gy)
     elif is_descendant_of_marked_parent(window, "flrd",  "xrd"):
         sbar_color(gy)
@@ -94,11 +103,20 @@ bl = "#0099FF"
 hi = "#efef8f"
 xx = "#ccdc90"
 
+root = tk.Tk()
+root.overrideredirect(1)
+
+status_bar = tk.Label(root, bg="#efef8f")
+status_bar.pack(fill=tk.X)
+
+update_geometry()
+
 # Create an i3ipc connection
 i3 = i3ipc.Connection()
 
 # Subscribe to window focus changes
 i3.on('window::focus', on_window_focus)
+i3.on('workspace::focus', on_window_focus)
 i3.on('output', on_output_change)  # Subscribe to output change events
 
 # Threading for i3ipc
@@ -110,3 +128,6 @@ root.mainloop()
 
 # Wait for i3ipc thread to finish (though this may never happen if you don't exit i3)
 i3ipc_thread.join()
+
+# TODO: mod this to properly deal with both floating and non floating names worksaces
+# - current mod is a quick hack to make empty workspaces turn back to black
