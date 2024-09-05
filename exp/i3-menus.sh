@@ -1,15 +1,11 @@
 #!/bin/sh
 #
 # https://github.com/katawful/dotfiles/blob/master/.config/i3/i3-menus.sh
-#
-# This script contains all of my various dmenu related options and scripts
-# It gets expanded as I need it
-# I tried to do everything in dmenu with rofi for maximum compatibility
 
 ## Show active windows
-# This activates a dmenu that shows our active windows and lets us go to them
-i3activewindow ()
-{
+
+i3activewindow () {
+
   rownum=1				# start row at 1
   totrow=$(wmctrl -l | grep "" -c)	# show total rows
   while [ "$rownum" -le "$totrow" ]; do		# while current row is <= total row
@@ -31,9 +27,8 @@ i3activewindow ()
 }
 
 ## Show window ID
-# This gets the window name of the active window and prepends the mark name if it exists
-i3windowid ()
-{
+
+i3windowid () {
   windowid=$(i3-msg -t get_tree | jq '.. | objects | .id,.focused' |\
     sed -e '/^.*null/d' | grep -B1 -A0 "true" | tr '\n' ' ' | cut -d " " -f1)
   # check if a window even exists

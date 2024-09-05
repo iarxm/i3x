@@ -4,7 +4,7 @@ import tkinter as tk
 import i3ipc
 import prctl
 
-prctl.set_name("i3bcol")
+prctl.set_name("i3sbar-c")
 
 def sbar_color(color):
     status_bar.config(bg=color)

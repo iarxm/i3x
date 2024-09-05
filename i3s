@@ -78,7 +78,7 @@ _prnt_wincmds() { grep -Ev '^\s*#|^$' "$1" | sed -r 's/^for_window //'; }
 
 _win_cmds()     { _prnt_wincmds "$i3win_configs"; }
 
-_cbar_reload() { pkill i3sbar-c; i3sbar-c & }
+_cbar_reload()  { pkill i3sbar-c; sleep 0.3; i3sbar-c & }
 
 
 _resize_winls() { # send i3 cmd lists from file to i3-msg
@@ -90,7 +90,7 @@ _resize_winls() { # send i3 cmd lists from file to i3-msg
 
 
 _normalise() { # on monitor resolution change
-    _cbar_reload
+    _cbar_reload &
     _resize_winls 
     _eq_all_nvim ;}
 
