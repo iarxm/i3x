@@ -2,7 +2,9 @@
 
 source "$(which i3s)"
 
+
 # prgs ################################################
+
 _st()      { st -c "$class" $@ & sleep 0.4; }
 _stx()     { st -c ${@} & }
 _sti()     { st -c "${1}" zsh -i -c "${2}" & }
@@ -23,6 +25,7 @@ _nnf3()    { _stf "nnn3" 'nnn'; }
 _vds_ev()  { st -c ds   -e nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev" ; }
 _mutt_ix() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter>'" & }
 _mutt_iy() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter><sidebar-toggle-visible><enter>'" & }
+_mutt_ib() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter>bibu'" & }
 _mutt_ii() { _mutt_ix; }
 _qb_o365() { qb win "https://outlook.office365.com/mail/" & }
 _qb_gpt()  { qb win "https://chat.openai.com" & }
@@ -73,6 +76,7 @@ _ws_rd()     { _nnn; } #todo: create custom workspace for academic reading (focu
 _ws_ds()     { _st "nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev""; }
 _ws_fl_ai()  { _ws_x "flai" "3" "_ws_ai"; }
 _ws_fl_oo()  { _ws_x "floo" "4" "_ws_oo" ;}
+_ws_fl_mk()  { _ws_x "flmk" "3" "_ws_mk" ;}
 _ws_fl_ml()  { _ws_x "flml" "3" "_ws_ml" ;}
 _ws_fl_mj()  { _ws_x "flmj" "3" "_ws_mj" ;}
 _ws_fl_au()  { _ws_x "flau" "2" "_ws_au" ;}
@@ -86,8 +90,9 @@ _ws_ab_sx()  { _ws_y "xsx" "_ws_sx";}
 _ws_ab_sy()  { _ws_y "xsy" "_ws_sy";}
 _ws_ab_sy()  { _ws_y "xds" "_ws_ds";}
 _ws_ab_oo()  { _ws_y "xoo" "_ws_oo";}
-_ws_ab_ml()  { _ws_y "xml" "_ws_ml";}
 _ws_ab_mj()  { _ws_y "xmj" "_ws_mj";}
+_ws_ab_mk()  { _ws_y "xmk" "_ws_mk";}
+_ws_ab_ml()  { _ws_y "xml" "_ws_ml";}
 
 
 _ws_ml_contain() { # TODO: container & non-floating, within any workspace 'x'
@@ -171,6 +176,7 @@ _main() {
         floo|ws.floo)     _ws_fl_oo ;;
         flds|ws.flds)     _ws_fl_ds ;;
         flmj|ws.flmj)     _ws_fl_mj ;;
+        flmk|ws.flml)     _ws_fl_mk ;;
         flml|ws.flml)     _ws_fl_ml ;;
         flau|ws.flau)     _ws_fl_au ;;
         flrd|ws.flrd)     _ws_fl_rd ;;
@@ -179,8 +185,9 @@ _main() {
         # workspace
         wxai)             _ws_ab_ai ;;
         wxoo)             _ws_ab_oo ;;
-        wxml)             _ws_ab_ml ;;
         wxmj)             _ws_ab_mj ;;
+        wxmk)             _ws_ab_mk ;;
+        wxml)             _ws_ab_ml ;;
         wxau)             _ws_ab_au ;;
         wxrd)             _ws_ab_rd ;;
         wxsx)             _ws_ab_sx ;;
@@ -197,13 +204,17 @@ _main() {
         nn2)              _nnf2 ;;
         nn3)              _nnf3 ;;
         w.ml)             _mutt_ii ;;
+        w.mlb)            _mutt_ib ;;
         pomx)             _pomx ;;
         pomy)             _pomy ;;
         # fallback
         *|custom)         ${@} ;;
     esac }
 
+
 _main ${@}
+
+
 
 # ###################################################
 #firefox --new-window betterhelp.com &
