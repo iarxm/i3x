@@ -35,7 +35,8 @@ _qb_cal()  { qb win "https://calendar.notion.so/" & }
 _qb_noti() { qb win "https://notion.so/" & }
 _qb_ml()   { _qb_gpt; }
 _qb_mlpv() { qb m; }
-_au()      { st -c "musicf" -e vimpc & }
+_au_fl()   { st -c "music-float" -e vimpc & }
+_au()      { st -c "music" -e vimpc & }
 _nnn()     { st -c nnn -e nnn & }
 _nnf1()    { _stf "nnn1" 'nnn -a'; }
 _nnf2()    { _stf "nnn2" 'nnn -a'; }
@@ -200,9 +201,12 @@ _main() {
         vfma)             _vfma ;;
         vfua)             _vfua ;;
         vfub)             _vfub ;;
+        # apps nnn
         nn1)              _nnf1 ;;
         nn2)              _nnf2 ;;
         nn3)              _nnf3 ;;
+        # apps
+        au)               _au ;;
         w.ml)             _mutt_ii ;;
         w.mlb)            _mutt_ib ;;
         pomx)             _pomx ;;
@@ -214,8 +218,18 @@ _main() {
 
 _main ${@}
 
-
-
+exit
+# TODO: feed a list of urls to qb to setup various browser workspaces
+# - Perhaps save them within /tmp/qbx as an intermediary structure of 
+# indices
+    # workspaces
+    case $cmd in
+        w.soc)            url_soc_b; _qx_win "${@}" ;;
+        w.oo)             url_oo; q_win "${@}" ;;
+        w.oo.wins)        url_oo; q_wins "${@}" ;;
+        w.cm)             url_cm_a; _qx_win "${@}" ;;
+        w.cm.ml)          url_cm_a; url_soc_a; _qx_win "${@}";;
+    esac
 # ###################################################
 #firefox --new-window betterhelp.com &
 #qb win betterhelp.com & sleep 4s
@@ -226,4 +240,3 @@ _main ${@}
 # ###################################################
 #alias _nv="nvim -c lua require'auto.odo'.$1()"
 #_nv()      { nvim -c "edit a"; }
-
