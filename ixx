@@ -1,9 +1,6 @@
 #!/bin/env bash
 
-#source "$(which i3s)"
-#st -c "nnn-renamer" -e "qmv --format destination-only ${@}" &
-st -c "nnn-renamer" -e qmv $1
-#st -c "nnn-renamer" -e "qmv --format destination-only ${@}" &
+source "$(which i3s)"
 
 # prgs ################################################
 
@@ -43,7 +40,7 @@ _nnn()     { st -c nnn -e nnn & }
 _nnf1()    { _stf "nnn1" 'nnn -a'; }
 _nnf2()    { _stf "nnn2" 'nnn -a'; }
 _nnf3()    { _stf "nnn3" 'nnn'; }
-_rename()  { st -c "nnn-renamer" -e qmv --format destination-only ${1} & }
+_rename()  { st -c "nnn-renamer" -e qmv --format destination-only ${1} 2>/dev/null & }
 
 _ml_split() {
 
