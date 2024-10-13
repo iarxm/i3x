@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-source "$(which i3s)"
+source "$(which i3s)" load
 
 # prgs ################################################
 

@@ -284,6 +284,7 @@ _main() {
         fl.mk|bind.mark)  _wmark $@ ;; #TODO
         fl.st|bind.st)    _stf $@ ;;
         xxf)              _xxf $@ ;;
+        load)             echo "";;# do nothing (source from eg ixx)
         *|custom)         $@ ;;
     esac 
 }
