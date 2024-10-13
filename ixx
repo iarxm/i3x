@@ -1,7 +1,9 @@
 #!/bin/env bash
 
-source "$(which i3s)"
-
+#source "$(which i3s)"
+#st -c "nnn-renamer" -e "qmv --format destination-only ${@}" &
+st -c "nnn-renamer" -e qmv $1
+#st -c "nnn-renamer" -e "qmv --format destination-only ${@}" &
 
 # prgs ################################################
 
@@ -41,7 +43,7 @@ _nnn()     { st -c nnn -e nnn & }
 _nnf1()    { _stf "nnn1" 'nnn -a'; }
 _nnf2()    { _stf "nnn2" 'nnn -a'; }
 _nnf3()    { _stf "nnn3" 'nnn'; }
-
+_rename()  { st -c "nnn-renamer" -e qmv --format destination-only ${1} & }
 
 _ml_split() {
 
@@ -169,7 +171,7 @@ _main() {
     
     cmd="$1" && [ -n "$1" ] && shift 1
     
-    _ini
+    #_ini
     
     case ${cmd} in
         # workspace float
@@ -211,6 +213,8 @@ _main() {
         w.mlb)            _mutt_ib ;;
         pomx)             _pomx ;;
         pomy)             _pomy ;;
+        # new
+        r|rename)         _rename "${@}" ;;
         # fallback
         *|custom)         ${@} ;;
     esac }
