@@ -7,7 +7,7 @@
 _ini() {
   declare -i ws_n
   i3win_configs="$HOME/.config/i3/x-window.config"
-  ws_n_cache="$/tmp/i3n"
+  ws_n_cache="/tmp/i3n"
   focus_parent="Shift+Ctrl+K"
   focus_child="Shift+Ctrl+j" ;}
 
