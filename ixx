@@ -219,25 +219,3 @@ _main() {
 
 _main ${@}
 
-exit
-# TODO: feed a list of urls to qb to setup various browser workspaces
-# - Perhaps save them within /tmp/qbx as an intermediary structure of 
-# indices
-    # workspaces
-    case $cmd in
-        w.soc)            url_soc_b; _qx_win "${@}" ;;
-        w.oo)             url_oo; q_win "${@}" ;;
-        w.oo.wins)        url_oo; q_wins "${@}" ;;
-        w.cm)             url_cm_a; _qx_win "${@}" ;;
-        w.cm.ml)          url_cm_a; url_soc_a; _qx_win "${@}";;
-    esac
-# ###################################################
-#firefox --new-window betterhelp.com &
-#qb win betterhelp.com & sleep 4s
-#qb w.oo & morgen &
-# TODO: read only nmutt? #st -c tabbedx neomutt -e "push '<change-folder>=ii<enter>'" &
-# TODO: vary sleep based on qb status (initiated or not)
-#
-# ###################################################
-#alias _nv="nvim -c lua require'auto.odo'.$1()"
-#_nv()      { nvim -c "edit a"; }
