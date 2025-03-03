@@ -1,46 +1,44 @@
 #!/bin/env bash
 
+# load functions eg _stf
 source "$(which i3s)" load
 
-# prgs ################################################
+# prgs
 
-_st()      { st -c "$class" $@ & sleep 0.4; }
-_stx()     { st -c ${@} & }
-_sti()     { st -c "${1}" zsh -i -c "${2}" & }
-_nvx()     { nvim -c "lua require'auto.odo'.${1}()"; }
-_nvs()     { st -c "${1}" -e nvim -c "lua require'auto.odo'.${2}()" ; }
-_nvf()     { _xxf "${1}" 'st -c '"${1}"' -e nvim -c "lua require'\''auto.odo'\''.'${2}'()"'; }
-_voa()     { _nvs voa oa & }
-_vma()     { _nvs vma ma & }
-_vmj()     { _nvs vmj mj & }
-_vml()     { _nvs vml ml & }
-_vfoa()    { _nvf vfoa oa & }
-_vfma()    { _nvf vfma ma & }
-_vfua()    { _nvf n0 ua & }
-_vfub()    { _nvf n1 ub & }
-_nnf1()    { _stf "nnn1" 'nnn -a'; }
-_nnf2()    { _stf "nnn2" 'nnn -a'; }
-_nnf3()    { _stf "nnn3" 'nnn'; }
-_vds_ev()  { st -c ds   -e nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev" ; }
+#_stx()     { st -c ${@} & }
+#_sty()     { st -c "${class}" ${@} & sleep 0.4; }
+#_sti()     { st -c "${1}" zsh -i -c "${2}" & }
+#_nvx()     { nvim -c "lua require'auto.odo'.${1}()"; }
+_vxf()     { _xxf "${1}" 'st -c '"${1}"' -e nvim -c "lua require'\''auto.odo'\''.'${2}'()"'; }
+_vxx()     { st -c "${1}" -e nvim -c "lua require'auto.odo'.${2}()" ; }
+_voa()     { _vxx voa oa & }
+_vma()     { _vxx vma ma & }
+_vmj()     { _vxx vmj mj & }
+_vml()     { _vxx vml ml & }
+_vfoa()    { _vxf vfoa oa & }
+_vfma()    { _vxf vfma ma & }
+_vfua()    { _vxf vfua ua & }
+_vfub()    { _vxf vfub ub & }
+_vds_ev()  { st -c ds -e nvim ~/da/ds/ev --cmd "cd ~/da/ds/ev" ; }
 _mutt_ix() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter>'" & }
 _mutt_iy() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter><sidebar-toggle-visible><enter>'" & }
 _mutt_ib() { st -c "mlx" neomutt -e "push '<change-folder>=ii<enter>bibu'" & }
 _mutt_ii() { _mutt_ix; }
 _qb_o365() { qb win "https://outlook.office365.com/mail/" & }
 _qb_gpt()  { qb win "https://chat.openai.com" & }
-_qb_mlcx() { qb win "contacts.google.com" & }
+_qb_mlcx() { qb win "https://contacts.google.com" & }
 _qb_mlcy() { qb tab "https://outlook.office365.com/people/" & }
 _qb_cal()  { qb win "https://calendar.notion.so/" & }
 _qb_noti() { qb win "https://notion.so/" & }
 _qb_ml()   { _qb_gpt; }
 _qb_mlpv() { qb m; }
-_au_fl()   { st -c "music-float" -e vimpc & }
-_au()      { st -c "music" -e vimpc & }
+_au_fl()   { st -c "flau" -e vimpc & }
+_au()      { st -c "au" -e vimpc & }
 _nnn()     { st -c nnn -e nnn & }
-_nnf1()    { _stf "nnn1" 'nnn -a'; }
-_nnf2()    { _stf "nnn2" 'nnn -a'; }
-_nnf3()    { _stf "nnn3" 'nnn'; }
-_rename()  { st -c "nnn-renamer" -e qmv --format destination-only ${1} 2>/dev/null & }
+_nnf1()    { _stf "nnf1" 'nnn -a'; }
+_nnf2()    { _stf "nnf2" 'nnn -a'; }
+_nnf3()    { _stf "nnf3" 'nnn -a'; }
+_rename()  { st -c "nnf-renamer" -e qmv --format destination-only ${1} 2>/dev/null & }
 
 _ml_split() {
 
@@ -49,23 +47,24 @@ _ml_split() {
   i3-msg '[class="mlx"] focus'
   i3-msg "split h"
   _qb_mlpv
-  sleep 3; i3-msg "focus right" ;}
+  sleep 3; i3-msg "focus right"
+}
 
 
-
-# spaces ##################################################
-
+# spaces
 
 _ws_oo() {
   _l_tabd
   _qb_cal
-  _voa ;}
+  _voa
+}
 
 _ws_ml() {
   _l_tabd
   _qb_ml
   _mutt_ii
-  _vml ;}
+  _vml
+}
 
 _ws_ai()     { _qb_gpt; }
 _ws_mj()     { _vma; }
@@ -99,10 +98,11 @@ _ws_ml_contain() { # TODO: container & non-floating, within any workspace 'x'
 
   _wcont_init
   _ws_ml
-  _wcont ;}
+  _wcont
+}
 
 
-# URLS #######################################
+# URLS
 # TODO: separate personal program configs into separate file
 
 urls=()
@@ -131,7 +131,7 @@ url_cm_a() {
 }
 
 
-# SPECIFIC SPACES ###############################
+# specifi spaces
 
 q_wa() { qb xwin web.whatsapp.com ;}
 w_xx() { qb win chat.openai.com; }
@@ -147,10 +147,10 @@ w_xy() {
 }
 
 
-# POMODORO ###########################################
+# pomodoro
 
 _pomx() {
-    for R in $(printf "%s\n" "$poms" | grep R -o); do
+    for R in $(printf "%s\n" "${poms}" | grep R -o); do
         read -r line
         echo "$(pomo status)" || exit 1
     done ;}
@@ -162,36 +162,34 @@ _pom1()  { _pomf1; _pomx;}
 _pom2()  { _pomf2; _pomx;}
 
 
-# workspaces ####################
-
 _main() {
     
-    cmd="$1" && [ -n "$1" ] && shift 1
+    cmd="${1}" && [ -n "${1}" ] && shift 1
     
     #_ini
     
     case ${cmd} in
         # workspace float
-        flai|ws.flai)     _ws_fl_ai ;;
-        floo|ws.floo)     _ws_fl_oo ;;
-        flds|ws.flds)     _ws_fl_ds ;;
-        flmj|ws.flmj)     _ws_fl_mj ;;
-        flmk|ws.flml)     _ws_fl_mk ;;
-        flml|ws.flml)     _ws_fl_ml ;;
-        flau|ws.flau)     _ws_fl_au ;;
-        flrd|ws.flrd)     _ws_fl_rd ;;
-        flsx|ws.flsx)     _ws_fl_sx ;;
-        flsy|ws.flsy)     _ws_fl_sy ;;
+        flai|ws-flai)     _ws_fl_ai ;;
+        floo|ws-floo)     _ws_fl_oo ;;
+        flds|ws-flds)     _ws_fl_ds ;;
+        flmj|ws-flmj)     _ws_fl_mj ;;
+        flmk|ws-flml)     _ws_fl_mk ;;
+        flml|ws-flml)     _ws_fl_ml ;;
+        flau|ws-flau)     _ws_fl_au ;;
+        flrd|ws-flrd)     _ws_fl_rd ;;
+        flsx|ws-flsx)     _ws_fl_sx ;;
+        flsy|ws-flsy)     _ws_fl_sy ;;
         # workspace
-        wxai)             _ws_ab_ai ;;
-        wxoo)             _ws_ab_oo ;;
-        wxmj)             _ws_ab_mj ;;
-        wxmk)             _ws_ab_mk ;;
-        wxml)             _ws_ab_ml ;;
-        wxau)             _ws_ab_au ;;
-        wxrd)             _ws_ab_rd ;;
-        wxsx)             _ws_ab_sx ;;
-        wxsy)             _ws_ab_sy ;;
+        xai|wxai)         _ws_ab_ai ;;
+        xoo|wxoo)         _ws_ab_oo ;;
+        xmj|wxmj)         _ws_ab_mj ;;
+        xmk|wxmk)         _ws_ab_mk ;;
+        xml|wxml)         _ws_ab_ml ;;
+        xau|wxau)         _ws_ab_au ;;
+        xrd|wxrd)         _ws_ab_rd ;;
+        xsx|wxsx)         _ws_ab_sx ;;
+        xsy|wxsy)         _ws_ab_sy ;;
         # windows
         voa)              _voa ;;
         vma)              _vma ;;
@@ -200,21 +198,21 @@ _main() {
         vfma)             _vfma ;;
         vfua)             _vfua ;;
         vfub)             _vfub ;;
-        # apps nnn
-        nn1)              _nnf1 ;;
-        nn2)              _nnf2 ;;
-        nn3)              _nnf3 ;;
         # apps
+        nnf1)             _nnf1 ;;
+        nnf2)             _nnf2 ;;
+        nnf3)             _nnf3 ;;
         au)               _au ;;
-        w.ml)             _mutt_ii ;;
-        w.mlb)            _mutt_ib ;;
+        ml)               _mutt_ii ;;
+        mlb)              _mutt_ib ;;
         pomx)             _pomx ;;
         pomy)             _pomy ;;
         # new
         r|rename)         _rename "${@}" ;;
         # fallback
         *|custom)         ${@} ;;
-    esac }
+    esac
+}
 
 
 _main ${@}

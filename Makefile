@@ -1,7 +1,6 @@
 
-#SRC=src/*
 DSTDIR=
-PREFIX=/usr/local/
+PREFIX=/usr/local
 
 all:
 	@echo "use 'make install'"

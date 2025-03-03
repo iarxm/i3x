@@ -317,8 +317,8 @@ _main() {
         wl|left)          _ws_nav_l ;;
         wx|numb)          _ws_go_abc "$1" ;;
         # float
-        fl.mk|bind.mark)  _wmark ${@} ;; #TODO
-        fl.st|bind.st)    _stf ${@} ;;
+        fl-mk|bind-mark)  _wmark ${@} ;; #TODO
+        fl-st|bind-st)    _stf ${@} ;;
         xxf)              _xxf ${@} ;;
         load)             echo "";;# do nothing (source from eg ixx)
         *|custom)         ${@} ;;
