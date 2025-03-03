@@ -38,7 +38,7 @@ _nnn()     { st -c nnn -e nnn & }
 _nnf1()    { _stf "nnf1" 'nnn -a'; }
 _nnf2()    { _stf "nnf2" 'nnn -a'; }
 _nnf3()    { _stf "nnf3" 'nnn -a'; }
-_rename()  { st -c "nnf-renamer" -e qmv --format destination-only ${1} 2>/dev/null & }
+_rename()  { st -c "nnf-renamer" -e qmv -d --format destination-only ${1} 2>/dev/null & }
 
 _ml_split() {
 
@@ -169,7 +169,7 @@ _main() {
     #_ini
     
     case ${cmd} in
-        # workspace float
+        # workspace
         flai|ws-flai)     _ws_fl_ai ;;
         floo|ws-floo)     _ws_fl_oo ;;
         flds|ws-flds)     _ws_fl_ds ;;
@@ -180,7 +180,6 @@ _main() {
         flrd|ws-flrd)     _ws_fl_rd ;;
         flsx|ws-flsx)     _ws_fl_sx ;;
         flsy|ws-flsy)     _ws_fl_sy ;;
-        # workspace
         xai|wxai)         _ws_ab_ai ;;
         xoo|wxoo)         _ws_ab_oo ;;
         xmj|wxmj)         _ws_ab_mj ;;
@@ -207,9 +206,8 @@ _main() {
         mlb)              _mutt_ib ;;
         pomx)             _pomx ;;
         pomy)             _pomy ;;
-        # new
+        # functions
         r|rename)         _rename "${@}" ;;
-        # fallback
         *|custom)         ${@} ;;
     esac
 }
