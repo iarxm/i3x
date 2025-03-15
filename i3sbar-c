@@ -22,11 +22,11 @@ def update_geometry(): # set geo
 
     # Calculate dimensions as a percentage of screen dimensions
     width = int(screen_width * 1.00)  # screen width
-    height = int(screen_height * 0.001)  # screen height
+    height = int(screen_height * 0.002)  # screen height
     
     # You can also set the x and y offsets the same way
     x_offset = int(screen_width * 0)  # from the left
-    y_offset = int(screen_height * 0.999)  # from the top
+    y_offset = int(screen_height * 0.998)  # from the top
     
     root.geometry(f"{width}x{height}+{x_offset}+{y_offset}")
     #geometry_string = f"{width}x{height}+{x}+{y}"
@@ -93,8 +93,9 @@ def on_window_focus(i3, e):
         sbar_color(bk)
 
 # init
-gy = "#808080"
 bk = "#000000"
+
+gy = "#808080"
 yw = "#FFFF00"
 gn = "#00FF00"
 rd = "#FF0000"
@@ -111,10 +112,10 @@ status_bar.pack(fill=tk.X)
 
 update_geometry()
 
-# Create an i3ipc connection
+# create an i3ipc connection
 i3 = i3ipc.Connection()
 
-# Subscribe to window focus changes
+# subscribe to window focus changes
 i3.on('window::focus', on_window_focus)
 i3.on('workspace::focus', on_window_focus)
 i3.on('output', on_output_change)  # Subscribe to output change events
@@ -123,7 +124,7 @@ i3.on('output', on_output_change)  # Subscribe to output change events
 i3ipc_thread = Thread(target=run_i3ipc)
 i3ipc_thread.start()
 
-# Keep Tkinter mainloop in the main thread
+# keep Tkinter mainloop in the main thread
 root.mainloop()
 
 # Wait for i3ipc thread to finish (though this may never happen if you don't exit i3)
