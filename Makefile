@@ -1,12 +1,11 @@
-
-DSTDIR=
 PREFIX=/usr/local
+BINDIR=$(PREFIX)/bin
 
 all:
 	@echo "use 'make install'"
 
 install:
-	mkdir -p ${DSTDIR}${PREFIX}
-	install -m 755 i3s i3scratch ixx ${DSTDIR}${PREFIX}/bin
-	install -m 755 i3sbar-x i3sbar-ws i3sbar-c ${DSTDIR}${PREFIX}/bin
+	mkdir -p ${BINDIR}
+	install -m 755 i3s i3scratch ixx ${BINDIR}
+	install -m 755 i3sbar-x i3sbar-ws i3b ${BINDIR}
 
