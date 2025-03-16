@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from threading import Thread
 import tkinter as tk
 import i3ipc
-import prctl
+import setproctitle
 
-prctl.set_name("i3sbar-c")
+setproctitle.setproctitle("i3b")
 
 def sbar_color(color):
     status_bar.config(bg=color)
@@ -132,3 +132,7 @@ i3ipc_thread.join()
 
 # TODO: mod this to properly deal with both floating and non floating names worksaces
 # - current mod is a quick hack to make empty workspaces turn back to black
+
+#import prctl
+#prctl.set_name("i3b")
+
