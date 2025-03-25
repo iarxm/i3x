@@ -14,6 +14,8 @@ _ini()
 
 _prn() { printf "%s \n" ${1} ; }
 
+_set_wid_c() { wid_c=$(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5); }
+
 _print_ws_n()
 {
     i3-msg -t get_workspaces \
@@ -23,13 +25,11 @@ _print_ws_n()
 
 _set_ws_n()  { ws_n="$(_print_ws_n)"; }
 
-_set_wid_c() { wid_c=$(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5); }
+_sav_ws_n()  { echo ${ws_n} > ${ws_n_cache}; }
 
-_sav_ws_n()  { _print_ws_n > ${ws_n_cache}; }
+_set_ws_p()  { ws_p="$(cat ${ws_n_cache})"; }
 
 _cl_cache()  { echo "" > ${ws_n_cache}; }
-
-_ret_ws_n()  { ws_p="$(cat ${ws_n_cache})"; }
 
 # neither are suitable; write a python program instead, to display the ws number for 1 second at the bottom; as an overlay
 #_ws_notif() { notify-send -u low "$ws_n";}
@@ -39,9 +39,9 @@ _ws_nav_l()  { _set_ws_n; i3-msg workspace $((ws_n - 1)); } #_ws_show; }
 
 _ws_nav_r()  { _set_ws_n; i3-msg workspace $((ws_n + 1)); } #_ws_show; }
 
-_foc_ws_n()  { i3-msg "workspace ${ws_n}"; }
+_foc_ws_n()  { i3-msg "workspace ${ws_n}" >/dev/null 2>&1; }
 
-_foc_wid_c() { i3-msg -q "[id="${wid_c}"] focus"; }
+_foc_wid_c() { i3-msg -q "[id="${wid_c}"] focus" >/dev/null 2>&1; }
 
 # equalise nvim
 
@@ -147,8 +147,8 @@ _stf()
         st -c "${class}" & }
 
     sleep 0.3
-    i3-msg '[class="'"${class}"'"] move scratchpad'
-    i3-msg '[class="'"${class}"'"] scratchpad show'
+    i3-msg '[class="'"${class}"'"] move scratchpad' 2>/dev/null
+    i3-msg '[class="'"${class}"'"] scratchpad show' 2>/dev/null
 }
 
 
@@ -160,8 +160,8 @@ _xxf()
     eval ${exc} &
 
     sleep 0.4
-    i3-msg '[class="'"${class}"'"] move scratchpad'
-    i3-msg '[class="'"${class}"'"] scratchpad show'
+    i3-msg '[class="'"${class}"'"] move scratchpad' 2>/dev/null
+    i3-msg '[class="'"${class}"'"] scratchpad show' 2>/dev/null
 }
 
 # floating workspaces
@@ -232,24 +232,28 @@ _ws_x()
 
 # workspaces : nav + custom names
 
-_ws_go() { i3-msg "workspace ${1}" ;}
+_ws_go() { i3-msg "workspace ${1}" >/dev/null 2>&1; }
 
 _ws_go_abc()
 {
     ws_x="${1}"
     _set_ws_n
-    _ret_ws_n
+    _set_ws_p
 
-    abc="$(echo ${ws_n} | grep "[aA-zZ"])"
+    if [ ! -n "$(echo ${ws_n} | grep "[aA-zZ]")" ]
+    then
+        _sav_ws_n
+        _ws_go ${ws_x}
 
-    [ -n "${abc}" ] || _sav_ws_n
-  
-    [ -n "${abc}" ] && [ ${ws_n} == ${ws_x} ] && [ -n "$(cat ${ws_n_cache})" ] \
-    && { _ws_go ${ws_p}; _cl_cache; return; }
-   
-    [ -n "${abc}" ] && { _ws_go ${ws_x}; return; }
-
-    _ws_go ${ws_x}
+    elif { [ ${ws_n} == ${ws_x} ] && [ -n "${ws_p}" ]; }
+    then
+        _ws_go ${ws_p}
+        _cl_cache
+    
+    else
+        _ws_go ${ws_x}
+    
+    fi 
 }
 
 _ws_y()
@@ -265,8 +269,8 @@ _ws_y()
 
 _mon_x()
 {
-    i3-msg "workspace ${1}"
-    i3-msg "move workspace to output ${2}"
+    i3-msg "workspace ${1}" 2>/dev/null
+    i3-msg "move workspace to output ${2}" 2>/dev/null
 }
 
 _mons()
@@ -302,7 +306,7 @@ _foc_fix()
     testx=$(i3scratch | grep "${class}")
     [ -n "${testx}" ] \
         && xdotool windowactivate --sync "${wid_x}" \
-        || i3-msg '[class="^'"${class}"'$"] scratchpad show'
+        || i3-msg '[class="^'"${class}"'$"] scratchpad show' 2>/dev/null
 }
 
 #_focus_scratch_cons() { i3-msg '[con_mark="^'"$1"'$"] scratchpad show'; } #overkill factoring
@@ -320,10 +324,10 @@ main()
         eq)               _equalise_all_nvim ;;
         mon)              _mons ${@} ;;
         # nav
-        ff|ffxr)          _foc_fix "$@" ;;
+        ff|ffxr)          _foc_fix "${@}" ;;
         wr|right)         _ws_nav_r ;;
         wl|left)          _ws_nav_l ;;
-        wx|numb)          _ws_go_abc "$1" ;;
+        wx|numb)          _ws_go_abc "${1}" ;;
         # float
         fl-mk|bind-mark)  _wmark ${@} ;; #TODO
         fl-st|bind-st)    _stf ${@} ;;
@@ -334,3 +338,4 @@ main()
 }
 
 main "${@}"
+#_sav_ws_n()  { _print_ws_n > ${ws_n_cache}; }
