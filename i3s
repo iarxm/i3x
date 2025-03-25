@@ -287,10 +287,12 @@ _mons()
     _mon_x 5 ${mon_a}
     _mon_x 6 ${mon_a}
     _mon_x 7 ${mon_a}
-    _mon_x 8 ${mon_b}
-    _mon_x 9 ${mon_b}
+    _mon_x 8  ${mon_b}
+    _mon_x 9  ${mon_b}
     _mon_x 10 ${mon_b}
     _mon_x xoo ${mon_b}
+    _mon_x xml ${mon_b}
+    _mon_x xau ${mon_b}
     #_mon_x 
     _foc_ws_n
 }
@@ -319,20 +321,16 @@ main()
     _ini
 
     case ${cmd} in
-        # functions
         r|w.resize.all)   _normalise ;;
         eq)               _equalise_all_nvim ;;
         mon)              _mons ${@} ;;
-        # nav
         ff|ffxr)          _foc_fix "${@}" ;;
         wr|right)         _ws_nav_r ;;
         wl|left)          _ws_nav_l ;;
         wx|numb)          _ws_go_abc "${1}" ;;
-        # float
         fl-mk|bind-mark)  _wmark ${@} ;; #TODO
         fl-st|bind-st)    _stf ${@} ;;
         xxf)              _xxf ${@} ;;
-        load)             echo "";;# do nothing (source from eg ixx)
         *|custom)         ${@} ;;
     esac 
 }
