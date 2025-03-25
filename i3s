@@ -1,9 +1,10 @@
 #!/bin/env bash
-# IAROM MADDEN
+
+# IAROM MADDEN mail@iarom.org
 # i3 extensions
 
-
-_ini() {
+_ini()
+{
     declare -i ws_n
     i3win_configs="${HOME}/.config/i3/x-window.config"
     ws_n_cache="/tmp/i3n"
@@ -13,7 +14,8 @@ _ini() {
 
 _prn() { printf "%s \n" ${1} ; }
 
-_print_ws_n() { 
+_print_ws_n()
+{
     i3-msg -t get_workspaces \
         | jq '.[] | select(.focused==true).name' \
         | cut -d"\"" -f2
@@ -41,26 +43,49 @@ _foc_ws_n()  { i3-msg "workspace ${ws_n}"; }
 
 _foc_wid_c() { i3-msg -q "[id="${wid_c}"] focus"; }
 
-
 # equalise nvim
 
 _eq_pids_nvim()  { pgrep nvim; }
 
-_eq_set_pid()    { PID=$(ps -o ppid= -p "${PID}" | awk '{print $1}'); } #_prn "PID: $PID"; }
+_eq_set_pid()
+{
+    echo "pid=${PID}"
+    PID=$(\
+        ps -o ppid= -p "${PID}" |\
+            awk '{print $1}'
+    )
+}
+#_prn "PID: $PID"; }
 
-_eq_set_win_id() { WID=$(wmctrl -lp | awk -v pid="${PID}" '$3 == pid {print $1}'); }
+_eq_set_win_id()
+{
+    WID=$(\
+        wmctrl -lp |\
+            awk -v pid="${PID}" '$3 == pid {print $1}'
+    )
+    echo "wid=${WID}"
+}
 
-_eq_set_id_iterate() { 
-    local c=1
-    #printf "%s\n" "BEGIN WHILE" ""
-    while [ -z "${WID}" ] && [ -n "${PID}" ] && [ ${c} -lt 10 ]; do 
+_eq_set_id_while_tst()
+{
+    [ -z "${WID}" ] || return 1
+    [ -n "${PID}" ] || return 1
+    [ ${PID} -gt 1 ] || return 1
+    [ ${c:="1"} -lt 10 ] || return 1
+}
+
+_eq_set_id_iterate()
+{
+    echo "begin while"
+    while _eq_set_id_while_tst; do 
         _eq_set_pid
         _eq_set_win_id
         c=$((c + 1))
     done
 }
 
-_eq_x() {
+_eq_x()
+{
     [ -n "${WID}" ] || return
     i3-msg -q "[id=${WID}] focus"
     sleep 0.25
@@ -68,7 +93,8 @@ _eq_x() {
     unset WID
 }
 
-_eq_all_nvim() {
+_eq_all_nvim()
+{
     # get pid of all nvim instances
     _set_wid_c
     _scratch
@@ -83,7 +109,8 @@ _eq_all_nvim() {
 
 # equalise all
 
-_scratch()      {
+_scratch()
+{
     i3-msg -q '[con_mark=.*] scratchpad show' 2> /dev/null
     i3-msg -q '[class=.*] scratchpad show' 2> /dev/null
 }
@@ -92,10 +119,11 @@ _prnt_wincmds() { grep -Ev '^\s*#|^$' "${1}" | sed -r 's/^for_window //'; }
 
 _win_cmds()     { _prnt_wincmds "${i3win_configs}"; }
 
-_cbar_reload()  { pkill i3sbar-c; sleep 0.3; i3sbar-c & }
+#_cbar_reload()  { pkill i3sbar-c; sleep 0.3; i3sbar-c & }
+_cbar_reload()  { systemctl --user restart xbar.service & }
 
-
-_resize_winls() {
+_resize_winls()
+{
     # send i3 cmd lists from file to i3-msg
     IFS=$'\n' # comments & for_window rm'd; regex  '^\s*#|^$' todo
     for i in $(_win_cmds); do
@@ -103,8 +131,8 @@ _resize_winls() {
     done
 }
 
-
-_normalise() {
+_normalise()
+{
     # on monitor resolution change
     _cbar_reload &
     _resize_winls 
@@ -112,10 +140,9 @@ _normalise() {
 }
 
 
-# floating win binds
-
-_stf()  {
-
+_stf()
+{
+    # floating win binds
     class="${1}"; shift 1; exc="${@}"
 
     [ -n "${exc}" ] && {
@@ -128,8 +155,8 @@ _stf()  {
 }
 
 
-_xxf()  {
-
+_xxf()
+{
     class="${1}"; shift 1; exc="${@}"
 
     #echo $exc
@@ -140,29 +167,26 @@ _xxf()  {
     i3-msg '[class="'"${class}"'"] scratchpad show'
 }
 
-
 # floating workspaces
 
 _l_tabd() { i3-msg "layout tabbed";}
 
-
-_set_hsplit_x() {
-
+_set_hsplit_x()
+{
     i3-msg "focus parent"
     i3-msg "split h"
     ${1}
 }
 
-
-_set_hsplit() {
-
+_set_hsplit()
+{
     _l_tabd
     st -c hsplitx ${cmda} & sleep 0.5s
     _set_hsplit_x ${1}
 }
 
-
-_wcontainer() {
+_wcontainer()
+{
     i3-msg "focus parent"
     i3-msg "focus parent"
     i3-msg "move container to workspace number ${ws_n}"
@@ -171,9 +195,8 @@ _wcontainer() {
     #kill $(wmctrl -lpx | awk '/tabbedx/ {print $3}')
     #- no need, handy to have the window there
 
-
-_ini_float() {
-  
+_ini_float()
+{
     mark="${1}"
     class="${mark}"
     _set_ws_n
@@ -182,9 +205,8 @@ _ini_float() {
     st -c fl_tmp & sleep 0.4
 }
 
-
-_set_float() {
-    
+_set_float()
+{
     sleep "${1}"
     #i3-msg "layout tabbed"
     i3-msg "focus parent"
@@ -200,11 +222,10 @@ _set_float() {
     kill $(pgrep -f "st -c fl_tmp")
 }
 
-
 _eloop() { for i in ${@}; do ${i}; done }
 
-
-_ws_x() { 
+_ws_x()
+{
   mark=${1}
   sleepx=${2}; shift 2
   _ini_float "${mark}"
@@ -212,14 +233,12 @@ _ws_x() {
   _set_float ${sleepx}
 }
 
-
 # workspaces : nav + custom names
 
 _ws_go() { i3-msg "workspace ${1}" ;}
 
-
-_ws_go_abc() {
-  
+_ws_go_abc()
+{
     ws_x="${1}"
     _set_ws_n
     _ret_ws_n
@@ -236,9 +255,8 @@ _ws_go_abc() {
     _ws_go ${ws_x}
 }
 
-
-_ws_y() {
-
+_ws_y()
+{
     ws_x=${1}; shift 1
     _ws_go_abc "${ws_x}"
     #sleep 0.5
@@ -248,17 +266,14 @@ _ws_y() {
     _eloop ${@}
 }
 
-
-# monitors 
-
-_mon_x() {
+_mon_x()
+{
     i3-msg "workspace ${1}"
     i3-msg "move workspace to output ${2}"
 }
 
-
-_mons() {
-
+_mons()
+{
     mon_a="${1}"
     mon_b="${2}"
     sleep 0.5s # mon_a
@@ -279,10 +294,8 @@ _mons() {
     _foc_ws_n
 }
 
-
-# focus 
-
-_foc_fix() {
+_foc_fix()
+{
     # fix focus stealing windows in i3 - tabbed preview activity.
     # todo: remove i3scratch dependencies # make a python script
     class="${1}"
@@ -297,10 +310,8 @@ _foc_fix() {
 
 #_focus_scratch_cons() { i3-msg '[con_mark="^'"$1"'$"] scratchpad show'; } #overkill factoring
 
-
-# main 3
-
-_main() {
+main()
+{
 
     cmd="${1}" && [ -n "${1}" ] && shift 1
     
@@ -324,7 +335,5 @@ _main() {
         *|custom)         ${@} ;;
     esac 
 }
-  
 
-_main ${@}
-
+main "${@}"
