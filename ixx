@@ -40,26 +40,25 @@ _nnf2()    { _stf "nnf2" 'nnn -a'; }
 _nnf3()    { _stf "nnf3" 'nnn -a'; }
 _rename()  { st -c "nnf-renamer" -e qmv -d --format destination-only ${1} 2>/dev/null & }
 
-_ml_split() {
-
-  _mutt_ii
-  sleep 3
-  i3-msg '[class="mlx"] focus'
-  i3-msg "split h"
-  _qb_mlpv
-  sleep 3; i3-msg "focus right"
+_ml_split()
+{
+    _mutt_ii
+    sleep 3
+    i3-msg '[class="mlx"] focus'
+    i3-msg "split h"
+    _qb_mlpv
+    sleep 3; i3-msg "focus right"
 }
 
-
-# spaces
-
-_ws_oo() {
+_ws_oo()
+{
   _l_tabd
   _qb_cal
   _voa
 }
 
-_ws_ml() {
+_ws_ml()
+{
   _l_tabd
   _qb_ml
   _mutt_ii
@@ -72,64 +71,66 @@ _ws_au()     { _st; _au; }
 _ws_sx()     { _st; }
 _ws_sy()     { _st; }
 _ws_rd()     { _nnn; } #todo: create custom workspace for academic reading (focused)
-_ws_ds()     { _st "nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev""; }
-_ws_fl_ai()  { _ws_x "flai" "3" "_ws_ai"; }
-_ws_fl_oo()  { _ws_x "floo" "4" "_ws_oo" ;}
-_ws_fl_mk()  { _ws_x "flmk" "3" "_ws_mk" ;}
-_ws_fl_ml()  { _ws_x "flml" "3" "_ws_ml" ;}
-_ws_fl_mj()  { _ws_x "flmj" "3" "_ws_mj" ;}
-_ws_fl_au()  { _ws_x "flau" "2" "_ws_au" ;}
-_ws_fl_sx()  { _ws_x "flsx" "2" "_ws_sx" ;}
-_ws_fl_sy()  { _ws_x "flsy" "2" "_ws_sy" ;}
-_ws_fl_ds()  { _ws_x "flds" "2" "_ws_ds" ;}
-_ws_ab_rd()  { _ws_y "xrd" "_ws_rd";}
-_ws_ab_au()  { _ws_y "xau" "_ws_au";}
-_ws_ab_ai()  { _ws_y "xai" "_ws_ai";}
-_ws_ab_sx()  { _ws_y "xsx" "_ws_sx";}
-_ws_ab_sy()  { _ws_y "xsy" "_ws_sy";}
-_ws_ab_sy()  { _ws_y "xds" "_ws_ds";}
-_ws_ab_oo()  { _ws_y "xoo" "_ws_oo";}
-_ws_ab_mj()  { _ws_y "xmj" "_ws_mj";}
-_ws_ab_mk()  { _ws_y "xmk" "_ws_mk";}
-_ws_ab_ml()  { _ws_y "xml" "_ws_ml";}
+_ws_ds()     { _st "nvim ~/d/ds/ev --cmd "cd ~/d/ds/ev"" ; }
+_ws_fl_ai()  { _ws_x "flai" "3" "_ws_ai" ; }
+_ws_fl_oo()  { _ws_x "floo" "4" "_ws_oo" ; }
+_ws_fl_mk()  { _ws_x "flmk" "3" "_ws_mk" ; }
+_ws_fl_ml()  { _ws_x "flml" "3" "_ws_ml" ; }
+_ws_fl_mj()  { _ws_x "flmj" "3" "_ws_mj" ; }
+_ws_fl_au()  { _ws_x "flau" "2" "_ws_au" ; }
+_ws_fl_sx()  { _ws_x "flsx" "2" "_ws_sx" ; }
+_ws_fl_sy()  { _ws_x "flsy" "2" "_ws_sy" ; }
+_ws_fl_ds()  { _ws_x "flds" "2" "_ws_ds" ; }
+_ws_ab_rd()  { _ws_y "xrd" "_ws_rd" ; }
+_ws_ab_au()  { _ws_y "xau" "_ws_au" ; }
+_ws_ab_ai()  { _ws_y "xai" "_ws_ai" ; }
+_ws_ab_sx()  { _ws_y "xsx" "_ws_sx" ; }
+_ws_ab_sy()  { _ws_y "xsy" "_ws_sy" ; }
+_ws_ab_sy()  { _ws_y "xds" "_ws_ds" ; }
+_ws_ab_oo()  { _ws_y "xoo" "_ws_oo" ; }
+_ws_ab_mj()  { _ws_y "xmj" "_ws_mj" ; }
+_ws_ab_mk()  { _ws_y "xmk" "_ws_mk" ; }
+_ws_ab_ml()  { _ws_y "xml" "_ws_ml" ; }
 
-
-_ws_ml_contain() { # TODO: container & non-floating, within any workspace 'x'
-
-  _wcont_init
-  _ws_ml
-  _wcont
+_ws_ml_contain()
+{
+    # TODO: container & non-floating, within any workspace 'x'
+    _wcont_init
+    _ws_ml
+    _wcont
 }
-
 
 # URLS
 # TODO: separate personal program configs into separate file
-
 urls=()
-url_soc_a() {
+url_soc_a()
+{
     urls+=("https://www.facebook.com/iarom.ma")
     urls+=("https://www.instagram.com/iarom.madden/")
 }
-url_soc_b() {
+url_soc_b()
+{
     url_soc_a
     urls+=("https://twitter.com/imaddsy")
     urls+=("https://publish.socialchamp.io/app/v2/engage/inbox?itemType=all&itemStatus=unread")
 }
-url_oo() {
+url_oo()
+{
     urls+=("notion.so")
     urls+=("https://chat.openai.com/chat")
 }
-url_oox() {
+url_oox()
+{
     # calendar.google.com opened with norestore func
     urls+=("contacts.google.com")
     urls+=("calendar.google.com")
     urls+=("https://habitica.com/")
 }
-url_cm_a() {
+url_cm_a()
+{
     urls+=("web.whatsapp.com")
     urls+=("https://business.facebook.com/latest/inbox/")
 }
-
 
 # specifi spaces
 
@@ -146,21 +147,19 @@ w_xy() {
     #qb tab chat.openai.com
 }
 
-
-# pomodoro
-
-_pomx() {
-    for R in $(printf "%s\n" "${poms}" | grep R -o); do
+_pomx()
+{
+    for R in $(printf "%s\n" "${poms}" | grep R -o)
+    do
         read -r line
         echo "$(pomo status)" || exit 1
-    done ;}
-
+    done
+}
 
 _pomf1() { poms=$(pomodoro status --format "%R ⏱ %c/%g 🍅\n%d"); }
 _pomf2() { poms=$(pomo status); }
 _pom1()  { _pomf1; _pomx;}
 _pom2()  { _pomf2; _pomx;}
-
 
 _main() {
     
@@ -212,6 +211,4 @@ _main() {
     esac
 }
 
-
-_main ${@}
-
+_main "${@}"

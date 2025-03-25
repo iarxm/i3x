@@ -269,8 +269,8 @@ _ws_y()
 
 _mon_x()
 {
-    i3-msg "workspace ${1}" 2>/dev/null
-    i3-msg "move workspace to output ${2}" 2>/dev/null
+    i3-msg "workspace ${1}" >/dev/null 2>&1
+    i3-msg "move workspace to output ${2}" >/dev/null 2>&1
 }
 
 _mons()
